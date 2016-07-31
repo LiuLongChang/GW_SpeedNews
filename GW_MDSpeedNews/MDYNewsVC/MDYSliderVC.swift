@@ -114,6 +114,40 @@ class MDYSliderVC: UIViewController,UIGestureRecognizerDelegate {
     func showLeftViewController(){
         
         
+        if showingLeft {
+            self.closeSideBar()
+            return
+        }
+        
+        
+        if canShowLeft || _leftVC != nil {
+            return
+        }
+        
+        
+        showingLeft = true
+        view.bringSubviewToFront(leftSideView)
+        
+        self.configureViewBlur(0, scale: 1)
+        
+        weak var weakSelf = self
+        UIView.animateWithDuration(Common_Show_Close_Duration_Time, animations: {
+            
+                self.configureViewBlur(weakSelf!._mainVC.view.frame.size.width - weakSelf!._leftSpace, scale: 1)
+            
+                weakSelf!.leftSideView.frame = CGRectMake(-weakSelf!._leftSpace, weakSelf!.leftSideView.frame.origin.y, weakSelf!.leftSideView.frame.size.width, weakSelf!.leftSideView.frame.size.height)
+            
+            
+            }) { (finished) in
+                
+                weakSelf!.leftSideView.userInteractionEnabled = true
+                weakSelf!._tapGestureRec.enabled = true
+                
+                
+        }
+        
+        
+        
         
     }
     
@@ -287,60 +321,97 @@ class MDYSliderVC: UIViewController,UIGestureRecognizerDelegate {
         
         if showingLeft {
             //左边栏已经展开 关闭左边栏
-            
             if animated {
-                //执行 动画
-                if animated {
+                
+                UIView.animateWithDuration(Common_Show_Close_Duration_Time, animations: {
                     
+                    //模糊图片 全透明
+                    self.configureViewBlur(0, scale: 1)
+                    //左侧View 移出 屏幕
+                    weakSelf!.leftSideView.frame = CGRectMake(-weakSelf!.leftSideView.frame.size.width, weakSelf!.leftSideView.frame.origin.y, weakSelf!.leftSideView.frame.size.width, weakSelf!.leftSideView.frame.size.height)
                     
-                    UIView.animateWithDuration(Common_Show_Close_Duration_Time, animations: {
+                    }, completion: { (finshed) in
                         
-                        //模糊图片 全透明
-                        self.configureViewBlur(0, scale: 1)
-                        //左侧View 移出 屏幕
-                        weakSelf!.leftSideView.frame = CGRectMake(-weakSelf!.leftSideView.frame.size.width, weakSelf!.leftSideView.frame.origin.y, weakSelf!.leftSideView.frame.size.width, weakSelf!.leftSideView.frame.size.height)
+                        //左侧View 放在最底层
+                        weakSelf!.view.sendSubviewToBack(weakSelf!.leftSideView)
                         
-                        }, completion: { (finshed) in
-                            
-                            //左侧View 放在最底层
-                            weakSelf!.view.sendSubviewToBack(weakSelf!.leftSideView)
-                            
-                                complete(finished: true)
-                            
-                    })
-                    
-                    
-                }else{
-                    //不执行动画
-                    
-                    
-                    
-                    
-                }
+                        complete(finished: true)
+                        
+                })
                 
                 
+            }else{
+                
+                
+                //不执行动画
+                
+                self.configureViewBlur(0, scale: 1)
+                //模糊图片 全透明
+                
+                //左侧View 移除 屏幕
+                leftSideView.frame = CGRectMake(leftSideView.frame.size.width, leftSideView.frame.origin.y, leftSideView.frame.size.width,leftSideView.frame.size.height)
+                view.sendSubviewToBack(leftSideView)
+                //
+                self.setDefaultSettingForShowMiddle()
+                complete(finished: true)
                 
                 
                 
                 
             }
             
-            
-            
-            
-            
-            
-            
         }else{
             
             
-            
+            if animated {
+                UIView.animateWithDuration(Common_Show_Close_Duration_Time, animations: {
+                    self.configureViewBlur(0, scale: 1)
+                    //右侧View移出屏幕
+                    weakSelf!.rightSideView.frame = CGRectMake(weakSelf!._mainVC.view.frame.size.width, weakSelf!.rightSideView.frame.origin.y, weakSelf!.rightSideView.frame.size.width, weakSelf!.rightSideView.frame.size.height)
+                    
+                    }, completion: { (finished) in
+                        
+                        weakSelf!.view.sendSubviewToBack(weakSelf!.rightSideView)
+                        weakSelf!.setDefaultSettingForShowMiddle()
+                        
+                        complete(finished: true)
+                        
+                })
+                
+            }else{
+                
+                weakSelf!.configureViewBlur(0, scale: 1)
+                
+                rightSideView.frame = CGRectMake(_mainVC.view.frame.size.width, rightSideView.frame.origin.y, rightSideView.frame.size.width, rightSideView.frame.size.height)
+                
+                weakSelf!.view.sendSubviewToBack(rightSideView)
+                self.setDefaultSettingForShowMiddle()
+                
+                complete(finished: true)
+                
+                
+            }
             
         }
-    
         
     }
     
+    
+    //显示中间的页面 进行的 设置
+    func setDefaultSettingForShowMiddle(){
+        
+        showingLeft = false
+        showingRight = false
+        _tapGestureRec.enabled = false
+        
+        self.removeConfigureViewBlur()
+        
+        if (showMiddleVc != nil) {
+            showMiddleVc!()
+        }
+        
+        
+    }
     
     
     
