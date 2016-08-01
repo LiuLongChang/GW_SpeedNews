@@ -106,6 +106,76 @@ class MDYSliderVC: UIViewController,UIGestureRecognizerDelegate {
     //控制左侧 右侧出现的方法
     func moveView_Gesture(panGes:UIPanGestureRecognizer){
         
+        //记录最开始滑动的位置 在一次滑动结束前 只会赋一次值
+        var startX : CGFloat!
+        //每次滑动的前一个坐标
+        var lastX : CGFloat!
+        //最后产生的移动坐标x 和 上一次产生的移动坐标之间的差值
+        var durationX : CGFloat!
+        
+        
+        var touchPoint = panGes.locationInView(UIApplication.sharedApplication().keyWindow)
+        if panGes.state == .Began {
+            //开始滑动时
+            startX = touchPoint.x
+            lastX = touchPoint.x
+        }
+        
+        if panGes.state == .Changed {
+            //正在滑动时
+            var currentX = touchPoint.x//当前移动到的距离
+            durationX = currentX - lastX
+            lastX = currentX
+            if durationX > 0 {
+                //右滑 左侧View 出现
+                if showingLeft && showingRight == false && canShowLeft == true && _leftVC == true {
+                    
+                    showingLeft = true
+                    view.bringSubviewToFront(leftSideView)
+                    
+                }
+                
+                
+            }else{
+                //左滑 右侧View 出现
+                if showingRight && showingLeft == false && canShowRight == true && _rightVC != nil {
+                    showingRight = true
+                    view.bringSubviewToFront(rightSideView)
+                }
+                
+            }
+            
+            
+            
+            if showingLeft == true {
+                
+                
+                
+                
+            }else{
+                
+                
+                
+                
+                
+                
+            }
+            
+            
+            
+            
+            
+            
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
     }
     
@@ -155,6 +225,34 @@ class MDYSliderVC: UIViewController,UIGestureRecognizerDelegate {
     func showRightViewController(){
         
         
+        if showingRight {
+            self.closeSideBar()
+            return
+        }
+        
+        if canShowRight || _rightVC == nil{
+            return
+        }
+        
+        showingRight = true
+        view.bringSubviewToFront(rightSideView)
+        self.configureViewBlur(0, scale: 1)
+        UIView.animateWithDuration(Common_Show_Close_Duration_Time, animations: {
+            
+            self.configureViewBlur(self._mainVC.view.frame.size.width, scale: 1)
+            
+            self.rightSideView.frame = CGRectMake(0, self.rightSideView.frame.origin.y, self.rightSideView.frame.size.width, self.rightSideView.frame.size.height)
+            
+            
+            }) { (finished) in
+                
+                self.rightSideView.userInteractionEnabled = true
+                self._tapGestureRec.enabled = true
+                if self.finishShowRight != nil {
+                    self.finishShowRight!()
+                }
+                
+        }
         
     }
     
