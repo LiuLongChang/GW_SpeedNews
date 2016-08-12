@@ -14,8 +14,44 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
 
+    var _pushNavi : UINavigationController!
+
+
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
+
+
+        let leftVC = UIViewController()
+        leftVC.view.backgroundColor = UIColor.blackColor()
+        MDYSliderVC.sharedInstance._leftVC = leftVC
+
+
+
+
+        let setVc = MDSetViewController()
+        MDYSliderVC.sharedInstance._rightVC = setVc
+
+
+
+        let mainVc = GWMainViewController()
+        let navigationVC = GWNavigationController(rootViewController:mainVc)
+        MDYSliderVC.sharedInstance._mainVC = navigationVC
+
+
+
+
+        _pushNavi = UINavigationController(rootViewController:MDYSliderVC.sharedInstance)
+
+        _pushNavi.setNavigationBarHidden(true, animated: false)
+
+
+        window?.rootViewController = _pushNavi
+
+        window?.makeKeyAndVisible()
+
+
+
+
         return true
     }
 

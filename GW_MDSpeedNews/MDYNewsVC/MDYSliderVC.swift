@@ -85,7 +85,7 @@ class MDYSliderVC: UIViewController,UIGestureRecognizerDelegate {
     
     //点击左侧View 进行中间VC的替换
     func setMainContentViewController(mainVc:UIViewController){
-        
+
         if mainVc .isEqual(_mainVC) {
             //先判断 设置的是不是同一个VC 如果是 则不操作
             if _mainVC.view.superview != nil {
@@ -93,89 +93,225 @@ class MDYSliderVC: UIViewController,UIGestureRecognizerDelegate {
                 _mainVC.view.removeFromSuperview()
             }
             _mainVC = mainVc
-            
+
             self.addChildViewController(mainVc)
             mainContentView.addSubview(mainVc.view)
-            
+
         }
         self.closeSideBar()
     }
     
-    
-    
+
+
+
+
+
+
+    //记录最开始滑动的位置 在一次滑动结束前 只会赋一次值
+    var startX : CGFloat! = 0
+    //每次滑动的前一个坐标
+    var lastX : CGFloat! = 0
+    //最后产生的移动坐标x 和 上一次产生的移动坐标之间的差值
+    var durationX : CGFloat! = 0
+
+
     //控制左侧 右侧出现的方法
     func moveView_Gesture(panGes:UIPanGestureRecognizer){
         
-        //记录最开始滑动的位置 在一次滑动结束前 只会赋一次值
-        var startX : CGFloat!
-        //每次滑动的前一个坐标
-        var lastX : CGFloat!
-        //最后产生的移动坐标x 和 上一次产生的移动坐标之间的差值
-        var durationX : CGFloat!
-        
-        
-        var touchPoint = panGes.locationInView(UIApplication.sharedApplication().keyWindow)
+
+        let touchPoint = panGes.locationInView(UIApplication.sharedApplication().keyWindow)
+
         if panGes.state == .Began {
             //开始滑动时
             startX = touchPoint.x
             lastX = touchPoint.x
         }
+
         
         if panGes.state == .Changed {
             //正在滑动时
-            var currentX = touchPoint.x//当前移动到的距离
+            let currentX = touchPoint.x//当前移动到的距离
+
             durationX = currentX - lastX
             lastX = currentX
             if durationX > 0 {
                 //右滑 左侧View 出现
-                if showingLeft && showingRight == false && canShowLeft == true && _leftVC == true {
-                    
+                if showingLeft == false && showingRight == false && canShowLeft == true && _leftVC != nil {
                     showingLeft = true
                     view.bringSubviewToFront(leftSideView)
-                    
                 }
-                
                 
             }else{
                 //左滑 右侧View 出现
-                if showingRight && showingLeft == false && canShowRight == true && _rightVC != nil {
+                if showingRight == false && showingLeft == false && canShowRight == true && _rightVC != nil {
                     showingRight = true
                     view.bringSubviewToFront(rightSideView)
                 }
-                
             }
-            
             
             
             if showingLeft == true {
-                
-                
-                
+
+                if (leftSideView.frame.origin.x >= -_leftSpace && durationX > 0) {
+                    //如果 左侧View 已经完全出现 并且是向左滑 则返回什么都不做
+                    return
+                }
+                if canShowLeft == false || _leftVC == nil {
+                    //如果 不可以出现左侧View 或左侧VC 为 nil 则返回什么都不做
+                    return
+                }
+
+                //Set LeftView 
+                var x = durationX + leftSideView.frame.origin.x
+                //设置 模糊图片
+                self.configureViewBlur(x + mainContentView.frame.size.width, scale: 1)
+
+
+                if x >= -_leftSpace {
+                    x = -_leftSpace
+                }
+
+
+                if leftSideView.frame.origin.x != x {
+                    leftSideView.frame = CGRectMake(x, leftSideView.frame.origin.y, leftSideView.frame.size.width, leftSideView.frame.size.height)
+                }
+
                 
             }else{
                 
-                
-                
-                
-                
+
+                if canShowRight == false || _rightVC == nil {
+                    //如果 不允许出现右侧View 或者右侧的Vc 是nil 则不做操作
+                    return
+                }
+
+                // 设置右侧 View 的 frame 只改变 X
+                var x = durationX + rightSideView.frame.origin.x
+
+                if x <= mainContentView.frame.size.width - rightSideView.frame.size.width {
+
+                    x = mainContentView.frame.size.width - rightSideView.frame.size.width
+                }
+
+                //
+                self.configureViewBlur(_mainVC.view.frame.size.width - x, scale: 1)
+
+                rightSideView.frame = CGRectMake(x, rightSideView.frame.origin.y, rightSideView.frame.size.width, rightSideView.frame.size.height)
                 
             }
-            
-            
-            
-            
-            
-            
+
+        }else if(panGes.state == .Ended){
+            //滑动结束时
+
+            weak var weakSelf = self
+
+            if showingLeft {
+
+
+                if canShowLeft == false || _leftVC == nil {
+                    return
+                }
+
+                if leftSideView.frame.origin.x + leftSideView.frame.size.width > (leftSideView.frame.size.width - _leftSpace)/2 {
+
+                    //Ifinset of left View > half most inset,then left view appears
+
+                    let durationTime : Double = Double((-leftSideView.frame.origin.x)/(_mainVC.view.frame.size.width))
+                    //calculate time of animation,left view ,s x 
+
+                    UIView.animateWithDuration(durationTime, animations: {
+
+
+                        weakSelf!.configureViewBlur(weakSelf!._mainVC.view.frame.size.width-weakSelf!._leftSpace, scale: 1)
+
+                        weakSelf!.leftSideView.frame = CGRectMake(-weakSelf!._leftSpace, weakSelf!.leftSideView.frame.origin.y, weakSelf!.leftSideView.frame.size.width, weakSelf!.leftSideView.frame.size.height)
+
+
+                        }, completion: { (finished) in
+
+                            weakSelf!.leftSideView.userInteractionEnabled = true
+                            weakSelf!._tapGestureRec.enabled = true
+
+                    })
+
+                }else{
+
+                    //如果zuoceView出现的偏移 小于等于 最大偏移量的 一半 则隐藏左侧view
+                    let durationTime = 1 - (-leftSideView.frame.origin.x)/(_mainVC.view.frame.size.width)
+                    UIView.animateWithDuration(Double(durationTime), animations: {
+
+
+                        self.configureViewBlur(0, scale: 1)
+                        weakSelf!.leftSideView.frame = CGRectMake(-weakSelf!.leftSideView.frame.size.width, weakSelf!.leftSideView.frame.origin.y, weakSelf!.leftSideView.frame.size.width, weakSelf!.leftSideView.frame.size.height)
+
+                        }, completion: { (finished) in
+
+                                weakSelf!.view.sendSubviewToBack(weakSelf!.leftSideView)
+                            self.setDefaultSettingForShowMiddle()
+
+                    })
+
+                }
+
+                return
+            }
+
+
+
+            if showingRight {
+
+
+                if canShowRight == false || _rightVC == nil{
+                    return
+                }
+
+                if rightSideView.frame.origin.x < _mainVC.view.frame.size.width / 2 {
+                    //日过右侧View 出现的范围大于一半 右侧View 出现
+
+                    let durationTime = rightSideView.frame.origin.x / _mainVC.view.frame.size.width
+
+                    UIView.animateWithDuration(Double(durationTime), animations: {
+
+                        //设置模糊图片 透明度 1
+                        weakSelf!.configureViewBlur(weakSelf!._mainVC.view.frame.size.width, scale: 1)
+                        //设置右侧View的X坐标
+                        weakSelf!.rightSideView.frame = CGRectMake(0, weakSelf!.rightSideView.frame.origin.y, weakSelf!.rightSideView.frame.size.width, weakSelf!.rightSideView.frame.size.height)
+
+
+                        }, completion: { (finished) in
+
+                            weakSelf!.rightSideView.userInteractionEnabled = true
+                            weakSelf!._tapGestureRec.enabled = true
+                            if weakSelf!.finishShowRight != nil {
+                                weakSelf!.finishShowRight!()
+                            }
+
+                    })
+
+
+                }else{
+                    //如果右侧View 出现的范围 小于等于 一半 隐藏右侧View
+
+                    let durationTime = 1 - (rightSideView.frame.origin.x)/(_mainVC.view.frame.size.width)
+                    UIView.animateWithDuration(Double(durationTime), animations: {
+
+
+                        self.configureViewBlur(0, scale: 1)
+                        weakSelf?.rightSideView.frame = CGRectMake(weakSelf!._mainVC.view.frame.size.width, weakSelf!.rightSideView.frame.origin.y, weakSelf!.rightSideView.frame.size.width, weakSelf!.rightSideView.frame.size.height)
+
+
+                        }, completion: { (finish) in
+
+                            weakSelf?.view.sendSubviewToBack(weakSelf!.rightSideView)
+                            weakSelf!.setDefaultSettingForShowMiddle()
+
+                    })
+
+                }
+
+            }
+
         }
-        
-        
-        
-        
-        
-        
-        
-        
-        
         
     }
     
@@ -204,7 +340,6 @@ class MDYSliderVC: UIViewController,UIGestureRecognizerDelegate {
         UIView.animateWithDuration(Common_Show_Close_Duration_Time, animations: {
             
                 self.configureViewBlur(weakSelf!._mainVC.view.frame.size.width - weakSelf!._leftSpace, scale: 1)
-            
                 weakSelf!.leftSideView.frame = CGRectMake(-weakSelf!._leftSpace, weakSelf!.leftSideView.frame.origin.y, weakSelf!.leftSideView.frame.size.width, weakSelf!.leftSideView.frame.size.height)
             
             
@@ -213,11 +348,7 @@ class MDYSliderVC: UIViewController,UIGestureRecognizerDelegate {
                 weakSelf!.leftSideView.userInteractionEnabled = true
                 weakSelf!._tapGestureRec.enabled = true
                 
-                
         }
-        
-        
-        
         
     }
     
@@ -243,7 +374,7 @@ class MDYSliderVC: UIViewController,UIGestureRecognizerDelegate {
             
             self.rightSideView.frame = CGRectMake(0, self.rightSideView.frame.origin.y, self.rightSideView.frame.size.width, self.rightSideView.frame.size.height)
             
-            
+
             }) { (finished) in
                 
                 self.rightSideView.userInteractionEnabled = true
@@ -274,10 +405,11 @@ class MDYSliderVC: UIViewController,UIGestureRecognizerDelegate {
         
         //设置 三个 子 VC
         self.initChildControllers()
-        
-        
-        _tapGestureRec = UITapGestureRecognizer(target: self,action: Selector(closeSideBar()))
-        
+
+
+
+
+        _tapGestureRec = UITapGestureRecognizer(target: self,action: #selector(MDYSliderVC.closeSideBar))
         _tapGestureRec.delegate = self
         _tapGestureRec.enabled = false
         
@@ -294,22 +426,18 @@ class MDYSliderVC: UIViewController,UIGestureRecognizerDelegate {
     
     
     func initSubViews(){
-        
-        
+
         //Frame 在屏幕右边
         rightSideView = UIView(frame:CGRectMake(self.view.frame.size.width,0,self.view.frame.size.width,self.view.frame.size.height))
         view.addSubview(rightSideView)
-        
         
         //Frame 在屏幕左边
         leftSideView = UIView(frame:CGRectMake(-view.frame.size.width,0,view.frame.size.width,view.frame.size.height))
         view.addSubview(leftSideView)
         
-        
         //Frame 在屏幕中
         mainContentView = UIView(frame:view.bounds)
         view.addSubview(mainContentView)
-        
         
     }
     
@@ -332,8 +460,7 @@ class MDYSliderVC: UIViewController,UIGestureRecognizerDelegate {
             _leftSpace = view.frame.size.width - _leftVC.view.frame.size.width
             _leftVC.view.frame = CGRectMake(_leftSpace, 0, _leftVC.view.frame.size.width, _leftVC.view.frame.size.height)
             leftSideView.addSubview(_leftVC.view)
-            
-            
+
         }
         
         
@@ -357,24 +484,22 @@ class MDYSliderVC: UIViewController,UIGestureRecognizerDelegate {
             
             _mainBackgroundIV = UIImageView(frame:_mainVC.view.bounds)
             _mainBackgroundIV.userInteractionEnabled = true
+
+
             _mainBackgroundIV.addGestureRecognizer(_tapGestureRec)
             _tapGestureRec.enabled = true
             
-            
-            
+
             //转换成图片
-            
-            
-            
-            
-            
+            let image = BlurHelp.getImageFromView(_mainVC.view)
+
             //图片添加模糊效果
-            
-            
-            
-            
-            
-            _mainVC.view.addSubview(_mainBackgroundIV)
+            _mainBackgroundIV.setImageTOBlur(image, blurRadius: kBlurredImageDefaultBlurRadius, completion: { Void->Void in
+
+
+            })
+            _mainVC.view.addSubview(_mainBackgroundIV) // 加了模糊效果的图片 加到 中间的View (mainVC.view)
+
         }
         
         //设置透明度
@@ -403,7 +528,7 @@ class MDYSliderVC: UIViewController,UIGestureRecognizerDelegate {
     //关闭侧边栏
     func closeSideBar(){
         
-        self.closeSideBar(animate: true, Complete: {(finished:Bool)->Void in
+        self.closeSideBarT(animate: true, Complete: {(finished:Bool)->Void in
         
         
         
@@ -412,7 +537,7 @@ class MDYSliderVC: UIViewController,UIGestureRecognizerDelegate {
     }
     
     
-    func closeSideBar(animate animated:Bool,Complete complete:(finished:Bool)->Void){
+    func closeSideBarT(animate animated:Bool,Complete complete:(finished:Bool)->Void){
         
         
         weak var weakSelf = self
@@ -452,14 +577,12 @@ class MDYSliderVC: UIViewController,UIGestureRecognizerDelegate {
                 //
                 self.setDefaultSettingForShowMiddle()
                 complete(finished: true)
-                
-                
-                
-                
+
+
             }
             
         }else{
-            
+            //  左边栏已经展开 关闭左边栏
             
             if animated {
                 UIView.animateWithDuration(Common_Show_Close_Duration_Time, animations: {
@@ -508,24 +631,93 @@ class MDYSliderVC: UIViewController,UIGestureRecognizerDelegate {
             showMiddleVc!()
         }
         
-        
     }
-    
+
+
+    func showLeftVC(){
+
+        if showingLeft == false {
+            self.closeSideBar()
+            return
+        }
+
+        if canShowLeft == false || _leftVC == nil{
+            return
+        }
+
+
+        showingLeft = true
+        view.bringSubviewToFront(leftSideView)
+
+        self.configureViewBlur(0, scale: 1)
+        weak var weakSelf = self
+        UIView.animateWithDuration(Common_Show_Close_Duration_Time, animations: {
+
+            weakSelf!.configureViewBlur(weakSelf!._mainVC.view.frame.size.width - weakSelf!._leftSpace, scale: 1)
+
+            weakSelf!.leftSideView.frame = CGRectMake(-weakSelf!._leftSpace, weakSelf!.leftSideView.frame.origin.y, weakSelf!.leftSideView.frame.size.width, weakSelf!.leftSideView.frame.size.height)
+
+
+        }) { (finish) in
+
+            weakSelf!.leftSideView.userInteractionEnabled = true
+            weakSelf!._tapGestureRec.enabled = true
+
+        }
+
+    }
+
+
+
+
+
+    func showRightVC(){
+
+        if showingRight == false {
+            self.closeSideBar();return
+        }
+
+        if canShowRight == false || _rightVC == nil {
+            return
+        }
+
+        showingRight = true;view.bringSubviewToFront(rightSideView)
+
+        self.configureViewBlur(0, scale: 1)
+
+        weak var weakSelf = self
+        UIView.animateWithDuration(Common_Show_Close_Duration_Time, animations: {
+
+            weakSelf!.configureViewBlur(weakSelf!._mainVC.view.frame.size.width, scale: 1)
+            weakSelf!.rightSideView.frame = CGRectMake(0, weakSelf!.rightSideView.frame.origin.y, weakSelf!.rightSideView.frame.size.width, weakSelf!.rightSideView.frame.size.height)
+
+
+        }) { (finish) in
+
+            weakSelf!.rightSideView.userInteractionEnabled = true
+            weakSelf!._tapGestureRec.enabled = true
+            if weakSelf!.finishShowRight != nil {
+                weakSelf?.finishShowRight!()
+            }
+            
+        }
+
+    }
     
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: false)
     }
-    
-    private convenience init() {
-        self.init()
+
+    private init() {
         canShowLeft = true
         canShowRight = true
         showingLeft = false
         showingRight = false
+        super.init(nibName: nil, bundle: nil)
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
