@@ -41,7 +41,6 @@ class GWScrollView: UIView,UIScrollViewDelegate {
             _currentView = newValue
         }
         get{
-
             let currentIndex = Int(_scrollView.contentOffset.x / _scrollView.frame.size.width)
             var view : UIView? = nil
 
@@ -49,32 +48,21 @@ class GWScrollView: UIView,UIScrollViewDelegate {
                 view = _arrayOfView[currentIndex] as? UIView
             }else{
 
-
             }
-
             _currentView = view
             return _currentView
         }
 
     }
 
-
-
-
-
-
-
     override init(frame: CGRect) {
         super.init(frame: frame)
-
         _scrollView = UIScrollView(frame: bounds)
         _scrollView.backgroundColor = UIColor.clearColor()
         _scrollView.pagingEnabled = true
         _scrollView.delegate = self
         self.addSubview(_scrollView)
-
         _arrayOfView = NSMutableArray()
-
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -95,7 +83,6 @@ class GWScrollView: UIView,UIScrollViewDelegate {
 
     func deleteView(index:NSInteger){
 
-
         let arrayIndex = index - 1
 
         if _arrayOfView.count > arrayIndex {
@@ -107,15 +94,12 @@ class GWScrollView: UIView,UIScrollViewDelegate {
                 let afterView : UIView = _arrayOfView[i] as! UIView
                 afterView.frame = CGRectOffset(afterView.frame, -view.frame.size.width, 0)
             }
-
-
             _arrayOfView.removeObject(arrayIndex)
 
             _scrollView.contentSize = CGSizeMake(_scrollView.frame.size.width * CGFloat(_arrayOfView.count), _scrollView.frame.size.height)
 
             // 刷新列表 和 相应的UI, 如果是当前显示的View的话
             self.endScroll()
-
 
         }else{
 
@@ -143,12 +127,9 @@ class GWScrollView: UIView,UIScrollViewDelegate {
         }
     }
 
-
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
         self.endScroll()
     }
-
-
 
     func endScroll(){
 
@@ -164,8 +145,6 @@ class GWScrollView: UIView,UIScrollViewDelegate {
 
     }
 
-
-
     func scrollToView(index:Int){
 
         let contentOffSetX = ( CGFloat(index - 1 ) * _scrollView.frame.size.width)
@@ -173,7 +152,5 @@ class GWScrollView: UIView,UIScrollViewDelegate {
         self.endScroll()
 
     }
-
-
 
 }
