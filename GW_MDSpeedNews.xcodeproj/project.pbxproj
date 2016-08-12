@@ -13,6 +13,11 @@
 		845E48B91D43D0DC003A58A4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 845E48B81D43D0DC003A58A4 /* Assets.xcassets */; };
 		845E48BC1D43D0DC003A58A4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 845E48BA1D43D0DC003A58A4 /* LaunchScreen.storyboard */; };
 		845E48C61D43D27B003A58A4 /* MDYSliderVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845E48C51D43D27B003A58A4 /* MDYSliderVC.swift */; };
+		942574401D5DC1E600D96452 /* 新闻接口.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 9425743E1D5DC1E600D96452 /* 新闻接口.rtf */; };
+		942574411D5DC1E600D96452 /* allCategory.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9425743F1D5DC1E600D96452 /* allCategory.txt */; };
+		942574441D5DC5EB00D96452 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942574431D5DC5EB00D96452 /* Models.swift */; };
+		942574461D5DC8FD00D96452 /* GWCategoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942574451D5DC8FD00D96452 /* GWCategoryView.swift */; };
+		942574481D5DCA6900D96452 /* GWScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942574471D5DCA6900D96452 /* GWScrollView.swift */; };
 		945427371D5D9F2D006F2F17 /* MDSetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945427361D5D9F2D006F2F17 /* MDSetViewController.swift */; };
 		9454273A1D5D9F9C006F2F17 /* GWMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945427391D5D9F9C006F2F17 /* GWMainViewController.swift */; };
 		9454273D1D5DA00F006F2F17 /* GWNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9454273C1D5DA00F006F2F17 /* GWNavigationController.swift */; };
@@ -31,6 +36,11 @@
 		845E48BB1D43D0DC003A58A4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		845E48BD1D43D0DC003A58A4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		845E48C51D43D27B003A58A4 /* MDYSliderVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MDYSliderVC.swift; sourceTree = "<group>"; };
+		9425743E1D5DC1E600D96452 /* 新闻接口.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = "新闻接口.rtf"; sourceTree = "<group>"; };
+		9425743F1D5DC1E600D96452 /* allCategory.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = allCategory.txt; sourceTree = "<group>"; };
+		942574431D5DC5EB00D96452 /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		942574451D5DC8FD00D96452 /* GWCategoryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GWCategoryView.swift; sourceTree = "<group>"; };
+		942574471D5DCA6900D96452 /* GWScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GWScrollView.swift; sourceTree = "<group>"; };
 		945427361D5D9F2D006F2F17 /* MDSetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MDSetViewController.swift; sourceTree = "<group>"; };
 		945427391D5D9F9C006F2F17 /* GWMainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GWMainViewController.swift; sourceTree = "<group>"; };
 		9454273C1D5DA00F006F2F17 /* GWNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GWNavigationController.swift; sourceTree = "<group>"; };
@@ -70,6 +80,8 @@
 		845E48B01D43D0DC003A58A4 /* GW_MDSpeedNews */ = {
 			isa = PBXGroup;
 			children = (
+				942574421D5DC5D900D96452 /* Models */,
+				9425743D1D5DC1D600D96452 /* DAL */,
 				945427341D5D9ED8006F2F17 /* ViewControllers */,
 				845E48C31D43D22F003A58A4 /* MDYNewsVC */,
 				845E48B11D43D0DC003A58A4 /* AppDelegate.swift */,
@@ -102,6 +114,23 @@
 			path = MDViewHelp;
 			sourceTree = "<group>";
 		};
+		9425743D1D5DC1D600D96452 /* DAL */ = {
+			isa = PBXGroup;
+			children = (
+				9425743E1D5DC1E600D96452 /* 新闻接口.rtf */,
+				9425743F1D5DC1E600D96452 /* allCategory.txt */,
+			);
+			path = DAL;
+			sourceTree = "<group>";
+		};
+		942574421D5DC5D900D96452 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				942574431D5DC5EB00D96452 /* Models.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		945427341D5D9ED8006F2F17 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -124,6 +153,8 @@
 			isa = PBXGroup;
 			children = (
 				945427391D5D9F9C006F2F17 /* GWMainViewController.swift */,
+				942574451D5DC8FD00D96452 /* GWCategoryView.swift */,
+				942574471D5DCA6900D96452 /* GWScrollView.swift */,
 			);
 			path = GWMainViewController;
 			sourceTree = "<group>";
@@ -194,6 +225,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				942574411D5DC1E600D96452 /* allCategory.txt in Resources */,
+				942574401D5DC1E600D96452 /* 新闻接口.rtf in Resources */,
 				845E48BC1D43D0DC003A58A4 /* LaunchScreen.storyboard in Resources */,
 				9454273F1D5DACE8006F2F17 /* images.jpeg in Resources */,
 				845E48B91D43D0DC003A58A4 /* Assets.xcassets in Resources */,
@@ -213,10 +246,13 @@
 				845E48B41D43D0DC003A58A4 /* ViewController.swift in Sources */,
 				945427371D5D9F2D006F2F17 /* MDSetViewController.swift in Sources */,
 				9454273D1D5DA00F006F2F17 /* GWNavigationController.swift in Sources */,
+				942574481D5DCA6900D96452 /* GWScrollView.swift in Sources */,
 				845E48B21D43D0DC003A58A4 /* AppDelegate.swift in Sources */,
 				94E501971D5C594E00F9CB43 /* UIImageView+BlurredImage.swift in Sources */,
+				942574461D5DC8FD00D96452 /* GWCategoryView.swift in Sources */,
 				94E501991D5C5B0300F9CB43 /* UIImage+ImageEffects.swift in Sources */,
 				9454273A1D5D9F9C006F2F17 /* GWMainViewController.swift in Sources */,
+				942574441D5DC5EB00D96452 /* Models.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
