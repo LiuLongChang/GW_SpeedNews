@@ -28,53 +28,59 @@ class GWMainViewController: UIViewController {
 
 
     //
-//    var _categoryView : GWCategoryView?
-//    var categoryView : GWCategoryView?{
-//
-//        set{
-//
-//            _categoryView = GWCategoryView(frame:CGRectMake(0,64,view.frame.size.width,43))
-//
-//            for model in showingCategoryArray {
-//
-//
-//                //categoryView
-//            }
-//
-//            weak var weakSelf = self
-//
-//
-//        }
-//        get{
-//            return _categoryView
-//        }
-//
-//    }
+    var _categoryView : GWCategoryView?
+    var categoryView : GWCategoryView?{
+
+        set{
+
+            _categoryView = GWCategoryView(frame:CGRectMake(0,64,view.frame.size.width,43))
+
+            for model in showingCategoryArray {
+
+
+                //categoryView
+            }
+
+            weak var weakSelf = self
+
+
+        }
+        get{
+            return _categoryView
+        }
+
+    }
 
 
 
-//    var _mainScrollView : GWCategoryView?
-//    var mainScrollView : GWCategoryView?{
-//
-//        set{
-//
-//            _categoryView = GWCategoryView(frame:CGRectMake(0,64,view.frame.size.width,43))
-//
-//            for model in showingCategoryArray {
-//
-//
-//                //categoryView
-//            }
-//
-//            weak var weakSelf = self
-//            
-//            
-//        }
-//        get{
-//            return _categoryView
-//        }
-//        
-//    }
+    var _mainScrollView : GWCategoryView?
+    var mainScrollView : GWCategoryView?{
+
+        set{
+
+            _categoryView = GWCategoryView(frame:CGRectMake(0,64,view.frame.size.width,43))
+
+            for model in showingCategoryArray {
+
+
+                //categoryView
+            }
+
+            weak var weakSelf = self
+            
+            
+        }
+        get{
+            return _categoryView
+        }
+        
+    }
+    
+    //
+    
+
+    
+    
 
 
 
@@ -107,20 +113,40 @@ class GWMainViewController: UIViewController {
 
         title = "新闻"
         //NavigationBar Right Btn
-        ////self.setRightNavigationButton()
+        self.setRightNavigationButton()
         //Cancel SlideView AutoInset
         automaticallyAdjustsScrollViewInsets = false
         //Add Category View
-        /////view.addSubview(categoryView)
+        view.addSubview(categoryView!)
 
-        ///view.addSubview(mainscr)
+        view.addSubview(mainScrollView!)
 
 
 
 
 
     }
-
+    
+    
+    
+    func setRightNavigationButton(){
+        
+        let button = UIButton(type:.Custom)
+        button.frame = CGRectMake(0, 0, 25.0, 44.0)
+        button.setImage(UIImage(named: "set.png"), forState: .Normal)
+        button.addTarget(self, action: #selector(GWMainViewController.setAction(_:)), forControlEvents: .TouchUpInside)
+        let barBtnItem = UIBarButtonItem(customView:button)
+        navigationItem.rightBarButtonItem = barBtnItem
+        
+    }
+    
+    func setAction(btn:UIButton){
+        NSLog("设置")
+        MDYSliderVC.sharedInstance.showRightViewController()
+    }
+    
+    
+    
 
     func initData(){
 
